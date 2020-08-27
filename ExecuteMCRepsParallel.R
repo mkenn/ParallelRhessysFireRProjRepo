@@ -145,5 +145,5 @@ for(k in 2:length(cur.results.set))
 cur.results.set<-list(fire.results=all.fire.results,
                       rhessys.results=all.rhessys.results)
 save(cur.results.set,file=paste("BCResultsPart",args[1],
-                                ".RData"),sep="")
+                                ".RData",sep=""))
 
