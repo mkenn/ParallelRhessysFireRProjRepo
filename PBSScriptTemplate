@@ -14,7 +14,5 @@ setenv TMPDIR /glade/scratch/$USER/temp
 mkdir -p $TMPDIR
 ###Load R module
 module load R/4.0.2
-###make sure libwmfire is accessed
-export LD_LIBRARY_PATH=.
 
 ### Run the executable
