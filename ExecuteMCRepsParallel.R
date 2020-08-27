@@ -142,8 +142,8 @@ for(k in 2:length(cur.results.set))
   all.fire.results<-rbind(all.fire.results,tmp.fire)
   all.rhessys.results<-rbind(all.rhessys.results,tmp.rhessys)
 }
-cur.results.set<-list(fire.results=all.fire.results,
+all.results<-list(fire.results=all.fire.results,
                       rhessys.results=all.rhessys.results)
-save(cur.results.set,file=paste("BCResultsPart",args[1],
+save(all.results,file=paste("BCResultsPart",args[1],
                                 ".RData",sep=""))
 
