@@ -101,7 +101,7 @@ for(i in 1:length(iter.mc.reps))
   # and name by Rep
   world_hdr_file <- paste(rhessys.script$world_hdr_file,Rep,".hdr",sep="")
     
- # write(hdr.input,file=world_hdr_file)
+  write(hdr.input,file=world_hdr_file)
     
     # and make new fire.def by copying original
   new.fire.def<-paste(def.names$fire[1],
@@ -109,10 +109,10 @@ for(i in 1:length(iter.mc.reps))
   cur.fire.def<-paste(def.names$fire[1],
                       ".def",sep="")
   
-#  system(paste("cp ",cur.fire.def,new.fire.def,sep=" "))
+  system(paste("cp ",cur.fire.def,new.fire.def,sep=" "))
   # then adding a line defining the current fire rep for the fire sizes file
 
-#  write(paste(Rep," fire_size_name"),append=TRUE,file=new.fire.def)
+  write(paste(Rep," fire_size_name"),append=TRUE,file=new.fire.def)
   
   all.list[[i]]<-list(Rep=Rep,rhessys.script=rhessys.script,outPre=outPre,
                         basin.var=basin.var,grow.var=grow.var)  
@@ -127,5 +127,23 @@ cur.results.set<-mclapply(all.list,FUN = runFireMC.fn,
 # this will return a list of length mc.cores,
 # each of which is the individual list returned by runFireMCBase.fn
 
-
+# combine the list into single dataframes for each
+# to aid in post-processing
+all.fire.results<-cur.results.set[[1]]$fire.results
+all.rhessys.results<-cur.results.set[[1]]$rhessys.results
+all.fire.results$Rep<-iter.mc.reps[1]
+all.rhessys.results$Rep<-iter.mc.reps[1]
+for(k in 2:length(cur.results.set))
+{
+  tmp.fire<-cur.results.set[[k]]$fire.results
+  tmp.fire$Rep<-iter.mc.reps[k]
+  tmp.rhessys<-cur.results.set[[k]]$rhessys.results
+  tmp.rhessys$Rep<-iter.mc.reps[k]
+  all.fire.results<-rbind(all.fire.results,tmp.fire)
+  all.rhessys.results<-rbind(all.rhessys.results,tmp.rhessys)
+}
+cur.results.set<-list(fire.results=all.fire.results,
+                      rhessys.results=all.rhessys.results)
+save(cur.results.set,file=paste("BCResultsPart",args[1],
+                                ".RData"),sep="")
 

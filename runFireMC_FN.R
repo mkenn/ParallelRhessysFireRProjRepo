@@ -40,14 +40,8 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   results1.file<-paste(cur.out,"_basin.daily",sep="")
   results2.file<-paste(cur.out,"_grow_basin.daily",sep="")
   
-  # results1.file<-paste(cur.out,"BCbasin30m_su",Rep,"_basin.daily",sep="")
-  # results2.file<-paste(cur.out,"BCbasin30m_su",Rep,"_grow_basin.daily",sep="")
-  
   # from rhessys file formats, column names for time variables  
   date.out<-c("day","month","year")
-  # var1.out<-c("lai","litrc","streamflow")# _basin.daily
-  # var2.out<-c("understory_leafc","understory_stemc","understory_biomassc","understory_height", #_grow_basin.daily
-  #             "overstory_leafc","overstory_stemc","overstory_biomassc","overstory_height")#,_grow_basin.daily
   # readin the rhessys results files  
   results1.df<-read.table(results1.file,header=TRUE)
   results2.df<-read.table(results2.file,header=TRUE)
