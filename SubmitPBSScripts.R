@@ -11,6 +11,7 @@ pbs.script.name<-"PBSScriptTemplate"
 total.mc.reps<-20
 # number of MC replicates per job (one job per node)
 iter.mc<-4
+workspace.pre<-"BCResultsPart"
 # loop from one to the total number of jobs submitted
 for(k in 1:(total.mc.reps/iter.mc)) 
 {
@@ -25,3 +26,4 @@ for(k in 1:(total.mc.reps/iter.mc))
   # submit the job
   system(paste("qsub ",cur.pbs.script,sep=""))
 }
+save.image(file="CurrentBatchSettings.RData")

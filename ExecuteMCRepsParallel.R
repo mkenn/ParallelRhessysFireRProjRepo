@@ -8,6 +8,9 @@ if(length(args)<2)
 #
 # source the function that runs RHESSys
 source("runFireMC_FN.R")
+# load in the submitPBSScripts.R workspace
+# to have consistent settings
+load("CurrentBatchSettings.RData")
 ########
 # first set up the default and header files
 # for the current set of MC reps. These should
@@ -144,6 +147,7 @@ for(k in 2:length(cur.results.set))
 }
 all.results<-list(fire.results=all.fire.results,
                       rhessys.results=all.rhessys.results)
-save(all.results,file=paste("BCResultsPart",args[1],
+# workspace.pre is from the SubmitPBSScriptsWorkspace
+save(all.results,file=paste(workspace.pre,args[1],
                                 ".RData",sep=""))
 
