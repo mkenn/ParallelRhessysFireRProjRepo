@@ -26,5 +26,7 @@ for(k in 1:(total.mc.reps/iter.mc))
   }
 }
 # from here you can do analysis
+# functions to process annual and montly summaries 
+# will be forthcoming
          
   
