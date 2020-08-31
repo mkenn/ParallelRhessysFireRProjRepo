@@ -14,7 +14,6 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   set.seed(seed=NULL) # makes a unique random number
   
   cur.fire.sizes<-paste("FireSizes",in.list$Rep,".txt",sep="") # unique FireSizes file
-  cur.out<-paste(in.list$outPre,in.list$Rep,sep="")
   if(file.exists(cur.fire.sizes))
     system(paste("rm",cur.fire.sizes,sep=" "))
   # remove the existing fire sizes file so it is not appended to
@@ -25,7 +24,7 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   # Header file updated with the Rep appended Fire.def file 
   world_hdr_file <- paste(in.list$rhessys.script$world_hdr_file,
                           in.list$Rep,".hdr",sep="")
-  
+  cur.out<-paste(in.list$outPre,in.list$Rep,sep="")
   # make a new rhessys command, relies on global variable rhessys.script being defined  
   tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s", 
                  in.list$rhessys.script$rhessys_version, 
@@ -51,11 +50,14 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   results.tmp<-cbind(cur.rep,results1.df[,date.out],
                      results1.df[,in.list$basin.var],
                      results2.df[,in.list$grow.var])
+  names(results.tmp)<-c("Rep",in.list$basin.var,
+                        in.list$grow.var)
   # readin the FireSizes file and make its MC rep column
   cur.fires<-read.table(cur.fire.sizes)
   cur2.rep<-rep(in.list$Rep,nrow(cur.fires))
   # name the columns and fill in the rep column
-  names(cur.fires)<-c("FirePix","Year","Month","wind1","wind2","nign")
+  names(cur.fires)<-c("FirePix","Year","Month","wind1",
+                      "wind2","nign")
   cur.fires$Rep<-cur2.rep
   # return separate the fire results and the rhessys results  
   return(list(fire.results=cur.fires,rhessys.results=results.tmp))

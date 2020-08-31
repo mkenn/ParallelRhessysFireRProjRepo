@@ -15,7 +15,7 @@ load("CurrentBatchSettings.RData")
 # first set up the default and header files
 # for the current set of MC reps. These should
 # be customized for individual applications
-outPre="BCbasin30m_su" # prefix for rhessys output files
+outPre="BCbasin30mFire_su" # prefix for rhessys output files
 # Below are variables to keep from rhessys basin output
 # the character strings should match desired columns in the file
 basin.var=c("lai","litrc","streamflow") 
@@ -27,13 +27,19 @@ grow.var=c("understory_leafc","understory_stemc","understory_biomassc","understo
 # note that the world_hdr_file is just the prefix
 # that will be updated by the function. Use the same prefix *.hdr,
 # where the prefix is * before .hdr
-rhessys.script=list(rhessys_version="~/RHESSysGit/RHESSys/rhessys/rhessys7.2",
+#########Locate RHESSys
+# Cheyenne:
+#cur.rhessys.ver<-"~/RHESSysGit/RHESSys/rhessys/rhessys7.2"
+# uwtresearch1:
+cur.rhessys.ver<-"~/GITRepos/RHESSys/rhessys/rhessys7.2"
+rhessys.script=list(rhessys_version=cur.rhessys.ver,
                     tec_file="../tecfiles/tec.su",
                     world_file="../worldfiles/BCbasin30mSUfire.world",
-                    world_hdr_file="../worldfiles/BCbasin30mFire",
+                    world_hdr_file="../worldfiles/BCbasin30mFireSP4",
                     flow_file="../flowtables/BCbasin30m.flow",
                     start_date="1941 10 1 1",
-                    end_date="1945 10 1 1",
+                    end_date="2000 10 1 1",
+                    prefix=outPre,
                     command_options=c("-s 3.107846 291.838599 -sv 3.107846 291.838599 -svalt 1.326919 0.797249 -gw 0.188211 0.299011 -b -g -vmort_off -firespread 30 ../auxdata/patchGrid.txt ../auxdata/DemGrid.txt"))
 # this vector defines the number of default files
 # for basin, hillslope,zone,patch,landuse,canopy_strata,
@@ -54,8 +60,7 @@ def.names=list(basin="../defs/basin_p301.def",
                                "../defs/veg_rs_shrub_only.def",
                                "../defs/veg_nonveg.def"),
                fire="../defs/fireBC",
-               base_stations="../clim/Grove_lowprov_clim.base")
-#               base_stations="../clim/Grove_lowprov_clim.base")
+               base_stations="../climSP4/Grove_lowprov_climSP4.base")
 # how many MC reps per node? Here we assume 4 replicates,
 # each of which will take 9 omp threads for a total of
 # 36 cpus per job

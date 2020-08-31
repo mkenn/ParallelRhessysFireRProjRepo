@@ -12,7 +12,9 @@ total.mc.reps<-20
 # number of MC replicates per job (one job per node)
 iter.mc<-4
 workspace.pre<-"BCResultsPart"
+outPre<-"BCbasin30mFire_su"
 # loop from one to the total number of jobs submitted
+save.image(file="CurrentBatchSettings.RData")
 for(k in 1:(total.mc.reps/iter.mc)) 
 {
   low.arg<-k*iter.mc-iter.mc+1
@@ -26,4 +28,3 @@ for(k in 1:(total.mc.reps/iter.mc))
   # submit the job
   system(paste("qsub ",cur.pbs.script,sep=""))
 }
-save.image(file="CurrentBatchSettings.RData")
