@@ -50,7 +50,7 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   results.tmp<-cbind(cur.rep,results1.df[,date.out],
                      results1.df[,in.list$basin.var],
                      results2.df[,in.list$grow.var])
-  names(results.tmp)<-c("Rep",in.list$basin.var,
+  names(results.tmp)<-c("Rep",date.out,in.list$basin.var,
                         in.list$grow.var)
   # readin the FireSizes file and make its MC rep column
   cur.fires<-read.table(cur.fire.sizes)
