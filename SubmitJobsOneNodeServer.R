@@ -11,7 +11,7 @@
 # this script can be run using R
 # in the rhessys directory
 # name of template script
-total.mc.reps<-200
+total.mc.reps<-150
 # number of MC replicates at once 
 # this is the number of server cores you
 # believe will be available for this set

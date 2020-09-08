@@ -15,7 +15,7 @@ load("CurrentBatchSettings.RData")
 # first set up the default and header files
 # for the current set of MC reps. These should
 # be customized for individual applications
-outPre="BCbasin30mFire_su" # prefix for rhessys output files
+#outPre="BCbasin30mFire_su" # prefix for rhessys output files
 # Below are variables to keep from rhessys basin output
 # the character strings should match desired columns in the file
 basin.var=c("lai","litrc","streamflow") 
@@ -64,7 +64,7 @@ def.names=list(basin="../defs/basin_p301.def",
 # how many MC reps per node? Here we assume 4 replicates,
 # each of which will take 9 omp threads for a total of
 # 36 cpus per job
-n.mc<-4 
+n.mc<-iter.mc
 iter.mc.reps<-seq(as.integer(args[1]),as.integer(args[2]),1)
 # for every MC replicate run from the same folder, we need
 # a unique fire default file, which requires a unique header
