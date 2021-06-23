@@ -7,45 +7,52 @@ if(length(args)<2)
 }
 #
 # source the function that runs RHESSys
-source("runFireMC_FN.R")
+source("/glade/u/home/mkennedy/GitGeneral/runFireMC_FN.R")
+# source the output filters from RHESSysIOInR (until figure out how to install package)
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/build_output_filter.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/IOin_output_filters.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/modify_output_filter.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/read_output_filter.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/write_output_filter.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/utils.R")
+source("/glade/u/home/mkennedy/GitGeneral/RHESSysIOinR/R/write_output_filter.R")
+
 # load in the submitPBSScripts.R workspace
 # to have consistent settings
 load("CurrentBatchSettings.RData")
 ########
-# first set up the default and header files
+# first setup the output filters
+
+
+
+# Next set up the default and header files
 # for the current set of MC reps. These should
 # be customized for individual applications
 #outPre="BCbasin30mFire_su" # prefix for rhessys output files
-# Below are variables to keep from rhessys basin output
-# the character strings should match desired columns in the file
-basin.var=c("lai","litrc","streamflow") 
-# below are variables to keep from basin growth output
-# the character strings should match desired columns in the file
-grow.var=c("understory_leafc","understory_stemc","understory_biomassc","understory_height", #
-           "overstory_leafc","overstory_stemc","overstory_biomassc","overstory_height")
 # Below are the required components of the RHESSys commandline
 # note that the world_hdr_file is just the prefix
 # that will be updated by the function. Use the same prefix *.hdr,
 # where the prefix is * before .hdr
 #########Locate RHESSys
 # Cheyenne:
-#cur.rhessys.ver<-"~/RHESSysGit/RHESSys/rhessys/rhessys7.2"
+cur.rhessys.ver<-"~/RHESSysGit/RHESSys/rhessys/rhessys7.3"
 # uwtresearch1:
-cur.rhessys.ver<-"~/GITRepos/RHESSys/rhessys/rhessys7.2"
+#cur.rhessys.ver<-"~/GITRepos/RHESSysSalience/RHESSys/rhessys/rhessys7.3"
 rhessys.script=list(rhessys_version=cur.rhessys.ver,
                     tec_file="../tecfiles/tec.su",
-                    world_file="../worldfiles/BCbasin30mSUfire.world",
-                    world_hdr_file="../worldfiles/BCbasin30mFireSP4",
+                    world_file="../worldfiles/BCbasin30mSUfireSal.world",
+                    world_hdr_file="../worldfiles/BCbasin30mSalFire",
                     flow_file="../flowtables/BCbasin30m.flow",
                     start_date="1941 10 1 1",
                     end_date="2000 10 1 1",
                     prefix=outPre,
-                    command_options=c("-s 3.107846 291.838599 -sv 3.107846 291.838599 -svalt 1.326919 0.797249 -gw 0.188211 0.299011 -b -g -vmort_off -firespread 30 ../auxdata/patchGrid.txt ../auxdata/DemGrid.txt"))
+                    
+                    command_options=c("-s 3.107846 291.838599 -sv 3.107846 291.838599 -svalt 1.326919 0.797249 -gw 0.188211 0.299011 -g -vmort_off -firespread 30"))# ../auxdata/patchGrid.txt ../auxdata/DemGrid.txt"))
 # this vector defines the number of default files
 # for basin, hillslope,zone,patch,landuse,canopy_strata,
 # fire, and base_stations, respectively
 n.defs=c(basin=1,hillslope=1,zone=1,patch=2,
-         landuse=1,canopy_strata=4,fire=1,base_stations=1)
+         landuse=1,canopy_strata=4,fire=1,fire.pre=1,base_stations=1)
 # give the defaut filenames in a list
 # the names here should match their names in the header file,
 # e.g., basin_default_filename requires basin below
@@ -60,7 +67,8 @@ def.names=list(basin="../defs/basin_p301.def",
                                "../defs/veg_rs_shrub_only.def",
                                "../defs/veg_nonveg.def"),
                fire="../defs/fireBC",
-               base_stations="../climSP4/Grove_lowprov_climSP4.base")
+               fire.pre="../auxdata/BC",
+               base_stations="../clim/Grove_lowprov_clim.base")
 # how many MC reps per node? Here we assume 4 replicates,
 # each of which will take 9 omp threads for a total of
 # 36 cpus per job
@@ -75,7 +83,7 @@ all.list<-list()
 for(i in 1:length(iter.mc.reps))
 {
   Rep<-iter.mc.reps[i]
-  hdr.input<-NA
+  hdr.input<-NA # make a custom header file for this iter
   for(k in 1:length(n.defs))
   {
     if(is.na(hdr.input))
@@ -117,13 +125,51 @@ for(i in 1:length(iter.mc.reps))
   cur.fire.def<-paste(def.names$fire[1],
                       ".def",sep="")
   
+  # Make output filters for this rep--basin-level
+  outfilter = build_output_filter(
+    timestep = "daily",
+    output_format = "csv",
+    output_path = "../output/",
+    output_filename=paste(outPre,Rep,"_basin",sep=""),
+#    output_filename = gsub("\\.","",paste0(name,"_basin")),
+    spatial_level = "basin",
+    spatial_ID = 1, # replace next line with basin.var
+    variables = basin.var
+  )
+  # if (opts$type[i] == "msr") {
+  #   outfilter$filter$output$filename = "p301_h2_basin_msr"
+  # }
+  
+  # outfilter2 = build_output_filter(
+  #   timestep = "yearly",
+  #   output_format = "csv",
+  #   output_path = "../output/",
+  #   output_filename = gsub("\\.","",paste0(name,"_stratum")),
+  #   spatial_level = "stratum",
+  #   spatial_ID = "2:2",
+  #   #variables = c("epv.height", "cs.totalc", "epv.proj_lai", 'transpiration_unsat_zone', "transpiration_sat_zone", "rootzone.S")
+  #   variables = c("epv.height", "cs.totalc", "epv.proj_lai", "transpiration_unsat_zone", "transpiration_sat_zone", "cs.live_stemc", "cs.dead_stemc",
+  #                 "cdf.psn_to_cpool", "cdf.total_mr", "cdf.total_gr", "cs.cpool")
+  # )
+  filter.name<-paste("../output/filters/BC_filter",Rep,".yml",sep="")
+  output_filter = IOin_output_filters(outfilter)#, file_name = filter.name)
+  
+  yaml_out = yaml::as.yaml(x = output_filter)
+  yaml_out = gsub("\\.0", "", yaml_out)
+  
+  file = file(filter.name, "w")
+  cat(yaml_out, file = file, sep = "")
+  close(file)
+  
+  
+  
   system(paste("cp ",cur.fire.def,new.fire.def,sep=" "))
   # then adding a line defining the current fire rep for the fire sizes file
 
   write(paste(Rep," fire_size_name"),append=TRUE,file=new.fire.def)
   
-  all.list[[i]]<-list(Rep=Rep,rhessys.script=rhessys.script,outPre=outPre,
-                        basin.var=basin.var,grow.var=grow.var)  
+  all.list[[i]]<-list(Rep=Rep,rhessys.script=rhessys.script,filter.name=filter.name,outPre=outPre)#,
+                        #basin.var=basin.var,grow.var=grow.var)  
      
 }
 # so now the default and header files are pre-populated

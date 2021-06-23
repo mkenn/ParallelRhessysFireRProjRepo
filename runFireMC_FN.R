@@ -24,34 +24,37 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
   # Header file updated with the Rep appended Fire.def file 
   world_hdr_file <- paste(in.list$rhessys.script$world_hdr_file,
                           in.list$Rep,".hdr",sep="")
-  cur.out<-paste(in.list$outPre,in.list$Rep,sep="")
   # make a new rhessys command, relies on global variable rhessys.script being defined  
-  tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -pre %s %s", 
+  tmp <- sprintf("%s -w %s -whdr %s -t %s -r %s -st %s -ed %s -of %s %s", 
                  in.list$rhessys.script$rhessys_version, 
                  in.list$rhessys.script$world_file, 
-                 world_hdr_file, in.list$rhessys.script$tec_file, 
+                 world_hdr_file, 
+                 in.list$rhessys.script$tec_file, 
                  in.list$rhessys.script$flow_file, 
                  in.list$rhessys.script$start_date, 
-                 in.list$rhessys.script$end_date, cur.out, 
+                 in.list$rhessys.script$end_date, 
+                 in.list$filter.name, 
                  in.list$rhessys.script$command_options)
   
-  system(tmp) # modify this for your own output needs
-  results1.file<-paste(cur.out,"_basin.daily",sep="")
-  results2.file<-paste(cur.out,"_grow_basin.daily",sep="")
+#  system("export LD_LIBRARY_PATH='/home/mkenn/GITRepos/RHESSysSalience/RHESSys/rhessys/lib/:/opt/netcdf/4.8.0/lib'")
+# uwtresearch1
+#  system(paste("export LD_LIBRARY_PATH='/home/mkenn/GITRepos/RHESSysSalience/RHESSys/rhessys/lib/:/opt/netcdf/4.8.0/lib'",tmp,sep="\n")) # modify this for your own output needs
+#cheyenne
+  system(paste("export LD_LIBRARY_PATH='/glade/u/home/mkennedy/RHESSysGit/RHESSys/rhessys/lib/'",tmp,sep="\n")) # modify this for your own output needs
+ cur.out<-paste("../output/",in.list$outPre,in.list$Rep,sep="")
+  results1.file<-paste(cur.out,"_basin.csv",sep="")
+#  results2.file<-paste(cur.out,"_grow_basin.daily",sep="")
   
   # from rhessys file formats, column names for time variables  
-  date.out<-c("day","month","year")
+#  date.out<-c("day","month","year")
   # readin the rhessys results files  
-  results1.df<-read.table(results1.file,header=TRUE)
-  results2.df<-read.table(results2.file,header=TRUE)
+  results1.df<-read.csv(results1.file)
+#  results2.df<-read.table(results2.file,header=TRUE)
   # create a column to record the current MC Rep
   cur.rep<-rep(in.list$Rep,nrow(results1.df))
   # make a new results data frame with only the variables of interest
-  results.tmp<-cbind(cur.rep,results1.df[,date.out],
-                     results1.df[,in.list$basin.var],
-                     results2.df[,in.list$grow.var])
-  names(results.tmp)<-c("Rep",date.out,in.list$basin.var,
-                        in.list$grow.var)
+  results.tmp<-cbind(cur.rep,results1.df)
+  names(results.tmp)[1]<-"Rep"
   # readin the FireSizes file and make its MC rep column
   cur.fires<-read.table(cur.fire.sizes)
   cur2.rep<-rep(in.list$Rep,nrow(cur.fires))
