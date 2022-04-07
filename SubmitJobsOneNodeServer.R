@@ -15,7 +15,7 @@ total.mc.reps<-150
 # number of MC replicates at once 
 # this is the number of server cores you
 # believe will be available for this set
-iter.mc<-50
+iter.mc<-10
 workspace.pre<-"BCResultsNoEffects" # for the workspace with aggregated results
 outPre<-"nsfTestMultIter_basin" # for the output file itself
 outPath<-"../output/nsf" # and the directory where the output file should go
@@ -36,7 +36,8 @@ for(k in 1:(total.mc.reps/iter.mc))
   # what ist he last rep id for the current set
   high.arg<-k*iter.mc
   # the current command call
-  cur.call<-paste("Rscript --vanilla ExecuteMCRepsParallel.R",low.arg,high.arg,sep=" ")
+  cur.call<-paste("Rscript --vanilla ~/GITRepos/ParallelRhessysFireRProjRepo/ExecuteMCRepsParallelServer.R",
+                  low.arg,high.arg,sep=" ")
 
   # execute the current call
   system(cur.call)
