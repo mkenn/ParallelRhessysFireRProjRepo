@@ -36,13 +36,15 @@ runFireMC.fn<-function(in.list) # rep is the integer indexing the current replic
                  in.list$filter.name, 
                  in.list$rhessys.script$command_options)
   
-#  system("export LD_LIBRARY_PATH='/home/mkenn/GITRepos/RHESSysSalience/RHESSys/rhessys/lib/:/opt/netcdf/4.8.0/lib'")
-# uwtresearch1
+  system("export LD_LIBRARY_PATH='/home/mkenn/GITRepos/RHESSysSalience/RHESSys/rhessys/lib/:/opt/netcdf/4.8.0/lib'")
+  system(tmp)
+  # uwtresearch1
 #  system(paste("export LD_LIBRARY_PATH='/home/mkenn/GITRepos/RHESSysSalience/RHESSys/rhessys/lib/:/opt/netcdf/4.8.0/lib'",tmp,sep="\n")) # modify this for your own output needs
 #cheyenne
-  system(paste("export LD_LIBRARY_PATH='/glade/u/home/mkennedy/RHESSysGit/RHESSys/rhessys/lib/'",tmp,sep="\n")) # modify this for your own output needs
- cur.out<-paste("../output/",in.list$outPre,in.list$Rep,sep="")
-  results1.file<-paste(cur.out,"_basin.csv",sep="")
+  # system(paste("export LD_LIBRARY_PATH='/glade/u/home/mkennedy/RHESSysGit/RHESSys/rhessys/lib/'",tmp,sep="\n")) # modify this for your own output needs
+# cur.out<-paste("../output/",in.list$outPre,in.list$Rep,sep="")
+# now read in the output file and the fire sizes file 
+   results1.file<-paste(outPath,"/",outPre,in.list$Rep,".csv",sep="")
 #  results2.file<-paste(cur.out,"_grow_basin.daily",sep="")
   
   # from rhessys file formats, column names for time variables  

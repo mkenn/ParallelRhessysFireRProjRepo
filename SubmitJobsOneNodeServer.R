@@ -16,8 +16,17 @@ total.mc.reps<-150
 # this is the number of server cores you
 # believe will be available for this set
 iter.mc<-50
-workspace.pre<-"BCResultsPart"
-outPre<-"BCbasin30mFire_su"
+workspace.pre<-"BCResultsNoEffects" # for the workspace with aggregated results
+outPre<-"nsfTestMultIter_basin" # for the output file itself
+outPath<-"../output/nsf" # and the directory where the output file should go
+filterPath<-"../output/filters" # path to the output filter iteslf
+filterName<-"nsf_filter"
+# which output variables do you want to keep and at what level?
+basin.var<-c("stratum.cs.totalc", "stratum.cs.net_psn", "stratum.cs.nppcum", "patch.litter_cs.totalc", "patch.litter_cs.litr1c", 
+             "patch.litter_cs.litr2c","patch.litter_cs.litr3c","patch.litter_cs.litr4c", "patch.cdf.decomp_w_scalar", "patch.cdf.decomp_t_scalar",
+             "patch.cdf.cwdc_to_litr2c", "patch.cdf.cwdc_to_litr3c", "patch.cdf.cwdc_to_litr4c", "stratum.cs.cwdc", "patch.fire.pet", "patch.fire.et", 
+             "patch.fire.understory_et", "patch.fire.understory_pet", "patch.rootzone.S", "zone.metv.vpd_day", 
+             "zone.metv.vpd_night", "patch.snow_stored", "patch.snowpack.water_depth", "patch.snowpack.water_equivalent_depth")
 save.image(file="CurrentBatchSettings.RData")
 # loop from one to the total number of MC sets
 for(k in 1:(total.mc.reps/iter.mc)) 
